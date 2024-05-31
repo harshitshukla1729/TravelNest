@@ -9,7 +9,7 @@ const listingSchema = new mongoose.Schema({
         type:String,
         required:true,
     },
-    imageURL:{
+    image:{
         type:String,
         default:'https://images.pexels.com/photos/315998/pexels-photo-315998.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
     },

@@ -6,23 +6,30 @@ const MONGO_URL = "mongodb://localhost:27017/TravelNest";
 
 const mongoose = require("mongoose");
 const path = require("path");
+const methodOverride = require("method-override");
 
 const Listing = require("./models/listing");
 
-mongoose.connect(MONGO_URL)
-.then(()=>console.log("MONGODB Connected"))
-.catch((err) => console.log("Error in Connecting to MONGODB",err));
+const listingRouter = require("./routes/listing");
 
-app.set("view engine","ejs");
-app.set("views",path.resolve("./views"));
+mongoose.connect(MONGO_URL)
+    .then(() => console.log("MONGODB Connected"))
+    .catch((err) => console.log("Error in Connecting to MONGODB", err));
+
+app.set("view engine", "ejs");
+app.set("views", path.resolve("./views"));
+app.use(methodOverride("_method"));
 
 // Middlewares
+app.use(express.urlencoded({ extended: false }));
 
 
 // Routes
 
-app.get("/",(req,res) => {
+app.get("/", (req, res) => {
     res.send("Hi from Root");
 });
 
-app.listen(PORT,() => console.log(`Server Started at PORT:${PORT}`));
+app.use("/listings", listingRouter);
+
+app.listen(PORT, () => console.log(`Server Started at PORT:${PORT}`));

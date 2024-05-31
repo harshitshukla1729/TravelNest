@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelNest</title>
+</head>
+
+<body>
+    <h3>Edit The Listing</h3>
+    
+    <div>
+        <form action="/listings/<%= listing._id %>?_method=PUT" method="post">
+            <label for="title">Title</label>
+            <input type="text" id="title" name="title" value="<%= listing.title %>">
+
+            <hr>
+
+            <label for="description">Description</label>
+            <textarea name="description" id="description" ><%= listing.description %></textarea>
+
+            <hr>
+
+            <label for="price">Price</label>
+            <input type="number" id="price" name="price" value="<%= listing.price %>">
+
+            <hr>
+
+            <label for="location">Location</label>
+            <input type="text" id="location" name="location" value="<%= listing.location %>">
+
+            <hr>
+
+            <label for="country">Country</label>
+            <input type="text" id="country" name="country" value="<%= listing.country %>">
+
+            <hr>
+
+            <button type="submit">Edit</button>
+        </form>
+    </div>
+</body>
+
+</html>
