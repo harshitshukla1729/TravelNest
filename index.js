@@ -7,6 +7,7 @@ const MONGO_URL = "mongodb://localhost:27017/TravelNest";
 const mongoose = require("mongoose");
 const path = require("path");
 const methodOverride = require("method-override");
+const ejsMate = require("ejs-mate");
 
 const Listing = require("./models/listing");
 
@@ -18,9 +19,11 @@ mongoose.connect(MONGO_URL)
 
 app.set("view engine", "ejs");
 app.set("views", path.resolve("./views"));
-app.use(methodOverride("_method"));
+app.use(express.static(path.resolve("./public")));
+app.engine("ejs",ejsMate);
 
 // Middlewares
+app.use(methodOverride("_method"));
 app.use(express.urlencoded({ extended: false }));
 
 
