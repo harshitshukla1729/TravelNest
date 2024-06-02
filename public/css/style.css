@@ -62,7 +62,7 @@ body{
     text-decoration: underline;
 }
 
-.card{
+.listing-card{
     border: none !important;
     margin-bottom: 2rem;
 }
@@ -74,7 +74,7 @@ body{
     /* height: 20rem !important; */
 }
 
-.card-body{
+.listing-card-body{
     padding: 0 !important;
 }
 

@@ -9,9 +9,11 @@ const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 
-const Listing = require("./models/listing");
+// const Listing = require("./models/listing");
 
 const listingRouter = require("./routes/listing");
+
+const ExpressError = require("./utils/ExpressError");
 
 mongoose.connect(MONGO_URL)
     .then(() => console.log("MONGODB Connected"))
@@ -20,7 +22,7 @@ mongoose.connect(MONGO_URL)
 app.set("view engine", "ejs");
 app.set("views", path.resolve("./views"));
 app.use(express.static(path.resolve("./public")));
-app.engine("ejs",ejsMate);
+app.engine("ejs", ejsMate);
 
 // Middlewares
 app.use(methodOverride("_method"));
@@ -34,5 +36,16 @@ app.get("/", (req, res) => {
 });
 
 app.use("/listings", listingRouter);
+
+app.all("*",(req,res,next) => {
+    next(new ExpressError(404,"Page Not Found!"));
+})
+
+app.use((err, req, res, next) => {
+    let { statusCode=500, message="Something Went Wrong" } = err;
+    res.status(statusCode).render("error.ejs",{
+        message,
+    });
+});
 
 app.listen(PORT, () => console.log(`Server Started at PORT:${PORT}`));
