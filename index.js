@@ -8,6 +8,8 @@ const mongoose = require("mongoose");
 const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
+const session = require("express-session");
+const flash = require("connect-flash");
 
 // const Listing = require("./models/listing");
 
@@ -24,9 +26,29 @@ app.set("views", path.resolve("./views"));
 app.use(express.static(path.resolve("./public")));
 app.engine("ejs", ejsMate);
 
+const sessionOptions = {
+    secret: "mysecret",
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        expires: Date.now() + 7 * 24 * 60 * 60 & 1000,
+        maxAge: 7 * 24 * 60 * 60 & 1000,
+        httpOnly: true
+    }
+};
+
+app.use(session(sessionOptions));
+app.use(flash());
+
 // Middlewares
 app.use(methodOverride("_method"));
 app.use(express.urlencoded({ extended: false }));
+
+app.use((req, res, next) => {
+    res.locals.success = req.flash("success");
+    res.locals.error = req.flash("error");
+    next();
+})
 
 
 // Routes
@@ -37,13 +59,13 @@ app.get("/", (req, res) => {
 
 app.use("/listings", listingRouter);
 
-app.all("*",(req,res,next) => {
-    next(new ExpressError(404,"Page Not Found!"));
+app.all("*", (req, res, next) => {
+    next(new ExpressError(404, "Page Not Found!"));
 })
 
 app.use((err, req, res, next) => {
-    let { statusCode=500, message="Something Went Wrong" } = err;
-    res.status(statusCode).render("error.ejs",{
+    let { statusCode = 500, message = "Something Went Wrong" } = err;
+    res.status(statusCode).render("error.ejs", {
         message,
     });
 });
