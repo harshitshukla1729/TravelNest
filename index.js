@@ -22,9 +22,10 @@ const userRouter = require("./routes/user");
 
 const ExpressError = require("./utils/ExpressError");
 
-mongoose.connect(MONGO_URL)
-    .then(() => console.log("MONGODB Connected"))
-    .catch((err) => console.log("Error in Connecting to MONGODB", err));
+mongoose
+  .connect(MONGO_URL)
+  .then(() => console.log("MONGODB Connected"))
+  .catch((err) => console.log("Error in Connecting to MONGODB", err));
 
 app.set("view engine", "ejs");
 app.set("views", path.resolve("./views"));
@@ -32,14 +33,14 @@ app.use(express.static(path.resolve("./public")));
 app.engine("ejs", ejsMate);
 
 const sessionOptions = {
-    secret: "mysecret",
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-        expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-        httpOnly: true
-    }
+  secret: "mysecret",
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    httpOnly: true,
+  },
 };
 
 app.use(session(sessionOptions));
@@ -56,31 +57,30 @@ app.use(methodOverride("_method"));
 app.use(express.urlencoded({ extended: false }));
 
 app.use((req, res, next) => {
-    res.locals.success = req.flash("success");
-    res.locals.error = req.flash("error");
-    res.locals.user = req.user;
-    next();
-})
-
+  res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error");
+  res.locals.user = req.user;
+  next();
+});
 
 // Routes
 
 app.get("/", (req, res) => {
-    res.send("Hi from Root");
+  res.send("Hi from Root");
 });
 
 app.use("/listings", listingRouter);
-app.use("/users",userRouter);
+app.use("/users", userRouter);
 
 app.all("*", (req, res, next) => {
-    next(new ExpressError(404, "Page Not Found!"));
-})
+  next(new ExpressError(404, "Page Not Found!"));
+});
 
 app.use((err, req, res, next) => {
-    let { statusCode = 500, message = "Something Went Wrong" } = err;
-    res.status(statusCode).render("error.ejs", {
-        message,
-    });
+  let { statusCode = 500, message = "Something Went Wrong" } = err;
+  res.status(statusCode).render("error.ejs", {
+    message,
+  });
 });
 
 app.listen(PORT, () => console.log(`Server Started at PORT:${PORT}`));
