@@ -22,31 +22,47 @@ const {
   handlePostNewReview,
 } = require("../controllers/listing");
 
+const { storage } = require("../cloudConfig");
+
+const multer = require("multer");
+const upload = multer({ storage });
+
 // Listing - Routes
 
-router.get("/", wrapAsync(handleGetAllListings));
-
-router.post("/", isLoggedIn, validateListing, wrapAsync(handlePostNewListing));
+router
+  .route("/")
+  .get(wrapAsync(handleGetAllListings))
+  .post(
+    isLoggedIn,
+    upload.single("image"),
+    validateListing,
+    wrapAsync(handlePostNewListing)
+  );
 
 router.get("/new", isLoggedIn, handleCreateNewListingPage);
 
-router.get("/:id", wrapAsync(handleGetListingById));
-
-router.put(
-  "/:id",
-  isLoggedIn,
-  isOwner,
-  validateListing,
-  wrapAsync(handlePutListingById)
-);
-
-router.delete("/:id", isLoggedIn, isOwner, wrapAsync(handleDeleteListingById));
+router
+  .route("/:id")
+  .get(wrapAsync(handleGetListingById))
+  .put(
+    isLoggedIn,
+    isOwner,
+    upload.single("image"),
+    validateListing,
+    wrapAsync(handlePutListingById)
+  )
+  .delete(isLoggedIn, isOwner, wrapAsync(handleDeleteListingById));
 
 router.get("/:id/edit", isLoggedIn, isOwner, wrapAsync(handleEditListingPage));
 
 // Review-Routes
 
-router.post("/:id/reviews", isLoggedIn, validateReview, wrapAsync(handlePostNewReview));
+router.post(
+  "/:id/reviews",
+  isLoggedIn,
+  validateReview,
+  wrapAsync(handlePostNewReview)
+);
 
 router.delete(
   "/:listingId/reviews/:reviewId",
